@@ -1,0 +1,1 @@
+../node_modules/web-zxing/zxing.js
