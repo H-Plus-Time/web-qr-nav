@@ -1,0 +1,12 @@
+{
+  "name": "web-qr",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "web-yaed": "*",
+    "web-zxing": "^0.0.4"
+  },
+  "repository": "git@github.com:H-Plus-Time/web-qr.git",
+  "author": "Nicholas Roberts <nicholas.roberts.au@gmail.com>",
+  "license": "APLv2"
+}
