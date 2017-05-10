@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-web-yaed@*:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/web-yaed/-/web-yaed-0.0.4.tgz#664608acc953ba8ba6dbbb8b04b67411b2c628b3"
+web-yaed@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/web-yaed/-/web-yaed-0.0.5.tgz#24ab3af431f3083f4aa537448f5eee4dfaeef19b"
 
 web-zxing@^0.0.4:
   version "0.0.4"
