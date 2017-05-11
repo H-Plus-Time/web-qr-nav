@@ -6,6 +6,8 @@ build:
     - script:
       name: actual build
       code: |
+        echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+        echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
         apk --no-cache add yarn
         yarn && yarn build
 deploy:
