@@ -6,6 +6,7 @@ build:
     - script:
       name: actual build
       code: |
+        apk --no-cache add yarn
         yarn && yarn build
 deploy:
   steps:
