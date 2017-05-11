@@ -6,7 +6,7 @@ classical/example-based self-superimposition. The primary goal is to increase
 the mean detection range.
 
 Assuming the spot size on a detector of the QR code's constituent blocks is 
-not less than the Abbe limit ($\lambda / 2, so about 250 nm for green light), 
+not less than the Abbe limit (λ/2, so about 250 nm for green light), 
 or significantly smaller than the pixel size of the detector (typically on 
 the order of 1-2 microns), increasing the resolution of the detector will 
 increase the mean detection range (assuming noise remains within an acceptable 
@@ -27,13 +27,13 @@ set of grid-squares to account for the regions split by the first set).
 
 Source the build.js file like so:
 ```html
-    <script src="/path/to/build.js"></script>
+<script src="/path/to/build.js"></script>
 ```
 
 Importantly, due to the way emscripten fetches WebAssembly files, the
 .wasm files for both ZXing and webYaed (installed as dependencies
 by web-qr) need to be in the same folder as the page that requires them - 
-if your page is at /test/, you zxing.wasm and web-yaed.wasm files need to 
+if your page is at /test/, your zxing.wasm and web-yaed.wasm files need to 
 be at /test/zxing.wasm and /test/web-yaed.wasm, respectively.
 
 The best way to handle this is to make a symlink for each of them.
