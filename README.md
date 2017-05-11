@@ -23,6 +23,17 @@ signs), and look for those first. This can be easily parallelized, provided the
 ellipse detection algorithm used is tolerant to occlusion (or by using a second
 set of grid-squares to account for the regions split by the first set).
 
+# Installation
+```
+npm install web-qr
+```
+
+or,
+
+```
+yarn add web-qr
+```
+
 # Usage
 
 Source the build.js file like so:
