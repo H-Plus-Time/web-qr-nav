@@ -1,6 +1,6 @@
 {
   "name": "web-qr",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "main": "index.js",
   "dependencies": {
     "web-yaed": "^0.0.8",
