@@ -14,7 +14,7 @@ deploy:
   steps:
     - script:
       name: install curl
-      code: yarn build && apk --no-cache add curl file
+      code: apk --no-cache add curl file
     - turistforeningen/npm-publish
     - script:
       name: get version
