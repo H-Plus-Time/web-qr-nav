@@ -1,4 +1,4 @@
-!dist/build.*
+!dist/build.js
 wercker.yml
 rollup.config.js
 test
