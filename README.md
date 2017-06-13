@@ -94,3 +94,4 @@ which often needs to be built from source.
 * benchmark tests
 * ~~unit tests~~
 * Web Workers
+* parametric testing
