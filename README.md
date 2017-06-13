@@ -23,6 +23,10 @@ signs), and look for those first. This can be easily parallelized, provided the
 ellipse detection algorithm used is tolerant to occlusion (or by using a second
 set of grid-squares to account for the regions split by the first set).
 
+See [web-yaed](https://github.com/H-Plus-Time/web-yaed) for the ellipse detection
+implementation, and [web-zxing](https://github.com/H-Plus-Time/web-zxing) for
+the fork of ZXing.
+
 # Installation
 ```
 npm install web-qr
@@ -72,3 +76,21 @@ for guide ellipse markers). The relevant objects for feature detection are:
 * window.WebAssembly (polyfills for this are extremely slow)
 * window.Promise (this can be polyfilled in a performant manner)
 * Object.assign (trivial to polyfill, not central to operating the library)
+
+# Testing
+For unit tests, run:
+```bash
+yarn test
+# or npm test
+```
+
+# Develop
+Changes to the top-level package (web-qr) only require a working install
+of nodejs, and ```npm install```. However, the web-zxing and web-yaed 
+dependencies are an entirely different ball of wax - these require emscripten,
+which often needs to be built from source.
+
+# Roadmap
+* benchmark tests
+* ~~unit tests~~
+* Web Workers

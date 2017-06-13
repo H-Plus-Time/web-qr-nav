@@ -3,17 +3,29 @@
   "version": "0.0.9",
   "main": "index.js",
   "dependencies": {
-    "web-yaed": "^0.0.8",
-    "web-zxing": "^0.0.8"
+    "global": "^4.3.2",
+    "web-yaed": "^0.0.9",
+    "web-zxing": "^0.0.8",
+    "zxc": "^0.1.2"
   },
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "test": "mocha test/unit_tests.js",
+    "benchmark": "benchmark test/benchmark.js"
   },
   "repository": "git@github.com:H-Plus-Time/web-qr.git",
   "author": "Nicholas Roberts <nicholas.roberts.au@gmail.com>",
   "license": "Apache-2.0",
   "devDependencies": {
+    "benchmark": "^2.1.4",
+    "canvas": "^1.6.5",
+    "chai": "^4.0.2",
+    "chai-as-promised": "^7.0.0",
+    "fs-readfile-promise": "^3.0.0",
+    "microtime": "^2.1.5",
+    "mocha": "^3.4.2",
     "rollup": "^0.41.6",
-    "rollup-plugin-node-resolve": "^3.0.0"
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "sharp": "^0.18.1"
   }
 }

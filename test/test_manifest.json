@@ -1,0 +1,24 @@
+[
+    {
+        "path": "qrcode.png", "expected": [{
+            "ellipse": {
+                "xc": 702.5179, "yc": 696.556, "a": 669, "b": 655.62,
+                "orientation": 1.6755, "score": 0.9212
+            },
+            "boundingBox": {
+                "xMin": 34, "yMin": 28, "xMax": 1372, "yMax": 1366
+            },
+            "qrs": [
+                {
+                    "data": "https://goo.gl/fYaQA8",
+                    "locus": {
+                        "north_east": {"x": 378, "y": 960},
+                        "south_east": {"x": 378, "y": 384},
+                        "south_west": {"x": 954, "y": 384},
+                        "north_west": {"x": 858, "y": 864}
+                    }
+                }
+            ]
+        }
+    ]}
+]

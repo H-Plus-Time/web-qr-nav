@@ -100,10 +100,12 @@ function testWebQR() {
         compCtx.drawImage(canvas, 100.5, 100.5);
         compCtx.beginPath();
         compCtx.strokeStyle = "#000000";
-        compCtx.lineWidth = 1;
+        compCtx.lineWidth = 5;
         compCtx.ellipse(125.5, 125.5, 50.5, 50.5, 45 * Math.PI/180, 0, 2 * Math.PI);
         const ellStart = 125.5 - (50.5);
         compCtx.stroke();
+        compCtx.lineWidth = 1;
+
         let qrs = webQR.detect(compCtx);
         for(var i = 0; i < qrs.length; i++) {
             for(var j = 0; j < qrs[i].length; j++) {
@@ -124,7 +126,43 @@ function testWebQR() {
     }
 }
 
+function testQRDistortions() {
+    let container = document.createElement('image');
+    let test_images = [
+        "qrcode.png",
+        "qrcode_45.png",
+        "qrcode_180.png",
+        "qrcode_perspective_071horiz.png",
+        "qrcode_perspective_071vert.png",
+        "qrcode_shear_125horiz.png",
+        "qrcode_shear_125vert.png"
+    ];
+    test_images.map(path => {
+        img = new Image();
+        img.addEventListener('load', function() {
+            cvs = document.createElement('canvas');
+            cvs.width = 1500;
+            cvs.height = 1500;
+            ctx = cvs.getContext('2d');
+            ctx.drawImage(this, 0, 0);
+            let qrs = webQR.detect(ctx, "blue");
+            console.log(qrs);
+            for(var i = 0; i < qrs.length; i++) {
+                for(var j = 0; j < qrs[i].length; j++) {
+                    var qr = qrs[i][j];
+                    console.log(qr.data);
+                    console.log(qr);
+                }
+            }
+            delete cvs;
+            delete this;
+        });
+        img.src = path;
+    })
+}
+
 webQR().then((module) => {
     Object.assign(window, module);
     testWebQR();
+    testQRDistortions()
 })
