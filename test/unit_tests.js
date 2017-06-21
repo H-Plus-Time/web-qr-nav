@@ -22,7 +22,7 @@ function LocusWithinBounds(input, expected, tolerance) {
 async function testImageLoader(path) {
     img = new Image;
     img.src = await readFile(path);
-    canvas = new Canvas(img.width, img.height)
+    canvas = new Canvas(img.width, img.height);
     ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0, img.width, img.height);
     return global.webQR.detect(ctx);
@@ -42,13 +42,24 @@ describe("WebQR", function() {
                 return results[0]
             }).should.eventually.have.all.keys(['boundingBox', 'qrs', 'ellipse'])
         })
-        let testManifest = JSON.parse(fs.readFileSync('./test/test_manifest.json'));
-        testManifest.forEach(function(test) {
-            // expected is arr of {ellipse, boundingBox, qrs} objects
-            it(`should return ${test.expected} for ${test.path}`, function() {
-                return testImageLoader("test/" + test.path).should
-                    .eventually.deep.equal(test.expected)
-            })
+        // let testManifest = JSON.parse(fs.readFileSync('./test/test_manifest.json'));
+        // testManifest.forEach(function(test) {
+        //     // expected is arr of {ellipse, boundingBox, qrs} objects
+        //     it(`should return ${test.expected} for ${test.path}`, function() {
+        //         return testImageLoader("test/" + test.path).should
+        //             .eventually.deep.equal(test.expected)
+        //     })
+        // })
+
+        describe("parameter range testing", async function() {
+            let testFiles = fs.readdirSync('./test/images/');
+            console.log(testFiles);
+            for (let path of testFiles) {
+                console.log(path);
+                let results = await testImageLoader(`./test/images/${path}`);
+                console.log(results);
+            }
+            false.should.be.false;
         })
     })
 })

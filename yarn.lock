@@ -1186,7 +1186,7 @@ oauth-sign@~0.8.1:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.8.2.tgz#46a6ab7f0aead8deae9ec0565780b7d4efeb9d43"
 
-object-assign@^4.0.1, object-assign@^4.1.0:
+object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
@@ -1199,6 +1199,10 @@ once@^1.3.0, once@^1.3.3:
 onetime@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
+
+operative@^0.4.6:
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/operative/-/operative-0.4.6.tgz#0e137bf5cc75e584515bdfb7c40ab5c5169e31a3"
 
 optionator@^0.8.2:
   version "0.8.2"
@@ -1716,8 +1720,8 @@ viewport-dimensions@^0.2.0:
   resolved "https://registry.yarnpkg.com/viewport-dimensions/-/viewport-dimensions-0.2.0.tgz#de740747db5387fd1725f5175e91bac76afdf36c"
 
 web-yaed@^0.0.9:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/web-yaed/-/web-yaed-0.0.8.tgz#17dd85031cf20904c03eff513d640ebce198ec65"
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/web-yaed/-/web-yaed-0.0.9.tgz#b218321e24c3145081fe3d9102f42b3b3ca70e18"
 
 web-zxing@^0.0.8:
   version "0.0.8"
@@ -1732,6 +1736,12 @@ wide-align@^1.1.0:
 wordwrap@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
+
+workerpool@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/workerpool/-/workerpool-2.2.1.tgz#41ebff11d5859da948fdb2c850b57da69240988a"
+  dependencies:
+    object-assign "^4.1.1"
 
 wrappy@1:
   version "1.0.2"

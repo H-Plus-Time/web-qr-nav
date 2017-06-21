@@ -3,9 +3,12 @@
   "version": "0.0.9",
   "main": "index.js",
   "dependencies": {
+    "canvas": "^1.6.5",
     "global": "^4.3.2",
+    "operative": "^0.4.6",
     "web-yaed": "^0.0.9",
     "web-zxing": "^0.0.8",
+    "workerpool": "^2.2.1",
     "zxc": "^0.1.2"
   },
   "scripts": {
@@ -18,7 +21,6 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "canvas": "^1.6.5",
     "chai": "^4.0.2",
     "chai-as-promised": "^7.0.0",
     "fs-readfile-promise": "^3.0.0",

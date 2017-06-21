@@ -2,10 +2,11 @@ import webYaed from 'web-yaed';
 import ZXing from 'web-zxing';
 var root;
 // detect window obj
-if(typeof(window) == 'undefined') {
+if(typeof(self) == 'undefined') {
     root = global;
 } else {
-    root = window;
+    // operating inside a Web Worker
+    root = self;
 }
 
 const minFunc = (a,b) => Math.min(a,b);
@@ -28,10 +29,31 @@ function limitPrecision(ellipse, level) {
     })
 }
 
-function detectQRs(ctx) {
-    const width = ctx.canvas.width;
-    const height = ctx.canvas.height;
-    let pixelData = ctx.getImageData(0,0,width,height).data;
+function getPixelIdx(width, height, x,y) {
+    return ((y*width+x)*4);
+}
+
+// canvas isn't available in web workers, but ImageData is
+// therefore, it is convenient to polyfill the getImageData method of Canvas
+function getImageData(imageData, sourceX, sourceY, destWidth, destHeight) {
+    let sourceWidth = imageData.width;
+    let sourceHeight = imageData.height;
+    let pixelData = imageData.data;
+    let dest = new Uint8ClampedArray(destWidth*destHeight*4);
+    // copy over line by line
+    for(let j = 0; j < destHeight; j++) {
+        let rowWidth = destWidth*4;
+        let destOffset = j*rowWidth;
+        let sourceOffset = getPixelIdx(sourceWidth, sourceHeight, sourceX, j+sourceY);
+        dest.set(pixelData.slice(sourceOffset, sourceOffset+rowWidth), destOffset);
+    }
+    return dest;
+}
+
+function detectQRs(imageData) {
+    let width = imageData.width;
+    let height = imageData.height;
+    let pixelData = imageData.data;
     // first, we execute ellipse detection
     const len = pixelData.length;
     // never trust an emscripten module to hand-hold re memory management.
@@ -61,14 +83,13 @@ function detectQRs(ctx) {
     // third, we run self-superimposition enhancement
     // fourth, we run ZXing._detect_qr() on each enhanced segment
     let results = regions.map((region) => {
+        console.log(region.ellipse);
         let seg = region.boundingBox;
         // calculate width and height for getImageData
         // actually takes an x0,y0,width,height
         let segHeight = seg.yMax - seg.yMin;
         let segWidth = seg.xMax - seg.xMin;
-        let pixelData = ctx.getImageData(seg.xMin, seg.yMin, segWidth, segHeight).data;
-        ctx.strokeStyle = '#FF0000';
-        ctx.strokeRect(seg.xMin, seg.yMin, segWidth, segHeight);
+        let pixelData = getImageData(imageData, seg.xMin, seg.yMin, segWidth, segHeight);
 
         let subLen = pixelData.length;
         // allocate memory

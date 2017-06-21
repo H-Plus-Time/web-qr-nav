@@ -1,5 +1,13 @@
 // we want this as a monolithic entity
 
+let pool = workerpool.pool('./gridWorker.js');
+
+async function poolBootstrap() {
+    let numWorkers = navigator.hardwareConcurrency - 1;
+    return Promise.all(Array(numWorkers).map(i => pool.exec('initialize')))
+}
+
+
 function resample_single(canvas, width, height, resize_canvas) {
     var width_source = canvas.width;
     var height_source = canvas.height;
@@ -76,66 +84,136 @@ function resample_single(canvas, width, height, resize_canvas) {
     ctx.putImageData(img2, 0, 0);
 }
 
-function testWebQR() {
-	var img = new Image;
-	img.src = './Qr-2.png';
-	img.onload = function() {
+function shiftEllipse(ell, xShift, yShift) {
+    ell.xc = ell.xc + xShift;
+    ell.yc = ell.yc + yShift;
+    return ell;
+}
 
-		var width = Math.floor(this.width),
-			height = Math.floor(this.height);
+function shiftBoundingBox(boundingBox, xShift, yShift) {
+    return {
+        xMin: boundingBox.xMin+xShift, xMax: boundingBox.xMax+xShift,
+        yMin: boundingBox.yMin+yShift, yMax: boundingBox.yMax+yShift
+    }
+}
+
+function shiftQR(qr, xShift, yShift) {
+    // qr.locus = qr.locus.map(coord => {
+
+    // })
+    return qr;
+}
+
+async function detectGridWise(ctx, width, height, xDivisions, yDivisions, exhaustive=false) {
+    var bufferResults = []
+    var results = []
+    let gridWidth = width/xDivisions;
+    let gridHeight = height/yDivisions;
+    let evenX = xDivisions % 2 == 0 ? true : false;
+    let evenY = yDivisions % 2 == 0 ? true : false;
+    console.log(gridWidth, gridHeight);
+    let start = performance.now();
+    // TODO: optimize to par-for over center, followed by horizon, then 
+    // in interleaved reverse 2D order for each quadrant (skipping the center)
+    for(let i = 0; i < width; i+= gridWidth) {
+        for(let j = 0; j < height; j+= gridHeight) {
+            // push to results and await en-masse
+            let imageData = ctx.getImageData(i, j, gridWidth, gridHeight);
+            bufferResults.push(pool.exec('detect',[imageData]).then(results => {
+                return results.map(res => {
+                    return {
+                        ellipse: shiftEllipse(res.ellipse, i, j),
+                        boundingBox: shiftBoundingBox(res.boundingBox, i, j),
+                        qrs: res.qrs.map(qr => shiftQR(qr, i, j))
+                    }
+                })
+            }));
+        }
+        let rowResults = await Promise.all(bufferResults);
+        gridsWithQRs = rowResults.reduce((flat, next) => flat.concat(next), [])
+            .filter((gridSquare) => {
+            return Object.keys(gridSquare).indexOf('qrs') != -1;
+        })
+        if(gridsWithQRs.length > 0 && !exhaustive) {
+            // A QR code has been found. return eagerly.
+            return gridsWithQRs;
+        }
+        results = results.concat(rowResults);
+        bufferResults = [];
+    }
+    console.log(performance.now() - start);
+    return results;
+}
+
+function loadImage(path) {
+    return new Promise(resolve => {
+        const img = new Image();
+        img.onload = function() {resolve({image: this, status: 'ok'})};
+        img.onerror = function() { resolve({image: this, status: 'error'})};
+
+        img.src = path;
+    });
+}
+
+
+function drawBoundingBox(ctx, boundingBox) {
+    ctx.strokeStyle = "#ff0000";
+    let width = boundingBox.xMax - boundingBox.xMin;
+    let height = boundingBox.yMax - boundingBox.yMin;
+    ctx.rect(boundingBox.xMin, boundingBox.yMin, width, height);
+    ctx.stroke();
+}
+
+function testWebQR(path, exhaustive=false) {
+	return loadImage(path).then(resp => {
+        console.log(resp);
+        let image = resp.image;
+		var width = Math.floor(image.width),
+			height = Math.floor(image.height);
 
 		var canvas = document.createElement('canvas');
 		canvas.style.display = 'block';
-		canvas.width = width;
-		canvas.height = height;
+        var newWidth = height/2, newHeight = height/2;
+		canvas.width = newWidth;
+		canvas.height = newHeight;
+        console.log(newWidth,newHeight);
 		var ctx = canvas.getContext('2d');
-		ctx.drawImage(this, 0, 0, width, height);
-		resample_single(canvas, 55, 55, true);
-        var compCanvas = document.createElement('canvas');
-        compCanvas.width = 256;
-        compCanvas.height = 256;
-        var compCtx = compCanvas.getContext('2d');
-        compCtx.fillStyle = '#FFFFFF';
-        compCtx.fillRect(0,0,256,256);
-        compCtx.drawImage(canvas, 100.5, 100.5);
-        compCtx.beginPath();
-        compCtx.strokeStyle = "#000000";
-        compCtx.lineWidth = 5;
-        compCtx.ellipse(125.5, 125.5, 50.5, 50.5, 45 * Math.PI/180, 0, 2 * Math.PI);
-        const ellStart = 125.5 - (50.5);
-        compCtx.stroke();
-        compCtx.lineWidth = 1;
+		ctx.drawImage(image, (width-height)/2, 0, height, height, 0, 0, newWidth, newHeight);
+        
+        // to do a 'one giant image' scan:
+        // let imageData = ctx.getImageData(0,0,newWidth, newHeight);
+        // return pool.exec('detect', [imageData]).then(results => {
+        //     console.log(results);
+        //     results.forEach(res => drawBoundingBox(ctx, res.boundingBox))
+        // })
 
-        let qrs = webQR.detect(compCtx);
-        for(var i = 0; i < qrs.length; i++) {
-            for(var j = 0; j < qrs[i].length; j++) {
-                var qr = qrs[i][j];
-                console.log(qr.data);
-                console.log(qr);
-                // compCtx.strokeStyle = '#00FF00';
-                // compCtx.beginPath();
-                // var x0 = qr.locus.north_west.x + ellStart - 20;
-                // var y0 = qr.locus.north_west.y + ellStart - 20;
-                // compCtx.rect(x0, y0,
-                //     (qr.locus.south_east.x - qr.locus.north_west.x)+5,
-                //     (qr.locus.south_east.y - qr.locus.north_west.y)+5);
-                // compCtx.stroke();
-            }
-        }
-		document.body.appendChild(compCanvas);
-    }
+        // however, we want to keep the image size down
+        // note that the first run on a multi-worker run is quite slow
+        // due to the compilation of the WebAssembly modules
+        return detectGridWise(ctx, newWidth, newHeight, 1,1, exhaustive).then(resp => {
+            resp.reduce((flat, next) => flat.concat(next), []).forEach(res => {
+                canvas.width = canvas.width / 8;
+                canvas.height = canvas.height / 8;
+                document.appendChild(canvas);
+                drawBoundingBox(ctx, res.boundingBox)
+                if(res.qrs && res.qrs.length > 0) {
+                    ctx.fillStyle = "#000000";
+                    ctx.font = "30px Arial";
+                    let offsetX = res.boundingBox.xMin + res.qrs[0].locus.north_west.x;
+                    let offsetY = res.boundingBox.yMax + res.qrs[0].locus.north_west.y;
+                    ctx.fillText(res.qrs[0].data, offsetX, offsetY);
+                }
+            })
+            return {results: resp, path: path}
+            
+        })
+    })
 }
 
 function testQRDistortions() {
     let container = document.createElement('image');
     let test_images = [
-        "qrcode.png",
-        "qrcode_45.png",
-        "qrcode_180.png",
-        "qrcode_perspective_071horiz.png",
-        "qrcode_perspective_071vert.png",
-        "qrcode_shear_125horiz.png",
-        "qrcode_shear_125vert.png"
+
     ];
     test_images.map(path => {
         img = new Image();
@@ -161,8 +239,18 @@ function testQRDistortions() {
     })
 }
 
-webQR().then((module) => {
-    Object.assign(window, module);
-    testWebQR();
-    testQRDistortions()
+poolBootstrap().then(resp => {
+    console.log(resp)
+    return fetch('./image_manifest.json').then(res => res.json())
+}).then(images => {
+    return Promise.all(images.map(path => {
+        if (path.indexOf("multi") != -1) {
+            return testWebQR(path, true)
+        } else {
+            return testWebQR(path);
+        }
+    }))
+}).then(testResults => {
+    console.log(testResults)
+    pool.clear();
 })

@@ -95,3 +95,8 @@ which often needs to be built from source.
 * ~~unit tests~~
 * Web Workers
 * parametric testing
+
+# Architecture
+We want to segment the image into grids, and distribute a scaled down version.
+
+We want this to be a race condition (for once) - execute the low res in parallel with the grid-wise original res, since we communicate with web workers via a messaging system (and we can cancel).
